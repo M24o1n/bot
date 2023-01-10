@@ -1,7 +1,9 @@
 import discord
 import responses
-from discord.ext import commands
+from discord.ext.commands import Bot
 import tok
+
+
 
 async def send_message(message, user_message, is_channel):
     try:
@@ -10,21 +12,38 @@ async def send_message(message, user_message, is_channel):
     except Exception as e:
         print(e)
 
-bot = commands.Bot(command_prefix='$')
 
 def run_bot():
-    TOKEN = tok.token
+    TOKEN = tok.tok()
     intents = discord.Intents.default()
     intents.message_content = True
-    client = discord.Client(intents = intents)
+    #client = discord.Client(intents = intents)
+    bot = Bot(command_prefix='$', intents = intents)
 
-    @client.event
+    @bot.event
     async def on_ready():
         print("Bot is ready")
+        
+    @bot.command(pass_context=True)
+    async def join(ctx):
+        if(ctx.author.voice):
+            channel = ctx.message.author.voice.channel
+            await channel.connect()
+        else:
+            await ctx.send("I don't want to be alone.")
 
-    @client.event
+    @bot.command(pass_context=True)
+    async def leave(ctx):
+        if (ctx.voice_client):
+            await ctx.guild.voice_client.disconnect()
+            await bot.send("See you later✨")
+        else:
+            await bot.send("I'm not in a voice channel!!")
+
+    @bot.event
     async def on_message(message):
-        if message.author == client.user:
+        await bot.process_commands(message)
+        if message.author == bot.user:
             return
         username = str(message.author)
         user_msg = str(message.content)
@@ -34,25 +53,9 @@ def run_bot():
         if user_msg.startswith("!"):
             user_msg = user_msg[1:]
             await send_message(message, user_msg, False)
+        elif user_msg.startswith("$"):
+            return
         else:
             await send_message(message, user_msg, True)
         
-    @client.command(pass_context=True)
-    async def join(ctx):
-        if(ctx.message.author.voice):
-            channel = ctx.message.author.voice.voice_channel
-            await client.join_voice_channel(channel)
-        else:
-            await client.say("I don't want to be alone.")
-
-    @client.command(pass_context=True)
-    async def leave(ctx):
-        if (ctx.message.author.voice):
-            server = ctx.message.server
-            voice_client = client.voice_client_in(server)
-            await voice_client.disconnect()
-            await client.say("See you later✨")
-        else:
-            await client.say("I'm not in a voice channel!!")
-        
-    client.run(TOKEN)
+    bot.run(TOKEN)
