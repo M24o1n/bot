@@ -39,8 +39,20 @@ def run_bot():
         
     @client.command(pass_context=True)
     async def join(ctx):
-        channel = ctx.message.author.voice.voice_channel
-        await client.join_voice_channel(channel)
+        if(ctx.message.author.voice):
+            channel = ctx.message.author.voice.voice_channel
+            await client.join_voice_channel(channel)
+        else:
+            await client.say("I don't want to be alone.")
 
+    @client.command(pass_context=True)
+    async def leave(ctx):
+        if (ctx.message.author.voice):
+            server = ctx.message.server
+            voice_client = client.voice_client_in(server)
+            await voice_client.disconnect()
+            await client.say("See you later✨")
+        else:
+            await client.say("I'm not in a voice channel!!")
         
     client.run(TOKEN)
