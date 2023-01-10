@@ -1,6 +1,7 @@
 import discord
 import responses
 from discord.ext import commands
+import tok
 
 async def send_message(message, user_message, is_channel):
     try:
@@ -12,7 +13,7 @@ async def send_message(message, user_message, is_channel):
 bot = commands.Bot(command_prefix='$')
 
 def run_bot():
-    TOKEN = "MTA2MjM1NjQ1MDIyOTM1ODYxMg.GjTWuc.nVmXrYt6Itk2Avck46gjDXiHdS1nL7g5evs0Oc"
+    TOKEN = tok.token
     intents = discord.Intents.default()
     intents.message_content = True
     client = discord.Client(intents = intents)
