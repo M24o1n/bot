@@ -1,9 +1,8 @@
 import discord
 import responses
 from discord.ext.commands import Bot
+from discord import FFmpegPCMAudio
 import tok
-
-
 
 async def send_message(message, user_message, is_channel):
     try:
@@ -28,7 +27,9 @@ def run_bot():
     async def join(ctx):
         if(ctx.author.voice):
             channel = ctx.message.author.voice.channel
-            await channel.connect()
+            connect = await channel.connect()
+            greet = FFmpegPCMAudio('assets/kita1.wav')
+            connect.play(greet)
         else:
             await ctx.send("I don't want to be alone.")
 
@@ -36,9 +37,9 @@ def run_bot():
     async def leave(ctx):
         if (ctx.voice_client):
             await ctx.guild.voice_client.disconnect()
-            await bot.send("See you later✨")
+            await ctx.send("See you later✨")
         else:
-            await bot.send("I'm not in a voice channel!!")
+            await ctx.send("I'm not in a voice channel!!")
 
     @bot.event
     async def on_message(message):
