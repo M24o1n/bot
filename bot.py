@@ -54,9 +54,10 @@ def run_bot():
         if user_msg.startswith("!"):
             user_msg = user_msg[1:]
             await send_message(message, user_msg, False)
-        elif user_msg.startswith("$"):
-            return
-        else:
+        elif user_msg.startswith("^"):
+            user_msg = user_msg[1:]
             await send_message(message, user_msg, True)
+        else:
+            return
         
     bot.run(TOKEN)
